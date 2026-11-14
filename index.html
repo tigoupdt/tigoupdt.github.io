@@ -7,8 +7,10 @@
 <meta name="robots" content="noindex">
 <link rel="icon" type="image/png" href="favicon.png">
 <script>
-  // --- Detección de dispositivo (función pura: se prueba con tests/detect.test.js) ---
+  // --- Detección y enlaces (funciones puras: se prueban con tests/detect.test.js) ---
   /* detect:start */
+  var APP_STORE_URL = 'https://apps.apple.com/app/id6834421582';
+  var PLAY_URL = 'https://play.google.com/store/apps/details?id=com.zihao.tigo';
   function detectDevice(ua, maxTouchPoints) {
     ua = String(ua || '');
     if (/android/i.test(ua)) return 'android';
@@ -21,23 +23,33 @@
     var l = String(language || '').toLowerCase().slice(0, 2);
     return ['es', 'ca', 'en', 'de', 'zh'].indexOf(l) >= 0 ? l : 'es';
   }
+  // Android: abre la app Play Store; si no está (móvil sin Google), Chrome va a la web de Play
+  function androidIntentUrl() {
+    return 'intent://details?id=com.zihao.tigo#Intent;scheme=market;package=com.android.vending;S.browser_fallback_url='
+      + encodeURIComponent(PLAY_URL) + ';end';
+  }
   /* detect:end */
-  var PLAY_URL = 'https://play.google.com/store/apps/details?id=com.zihao.tigo';
   var DEVICE = detectDevice(navigator.userAgent, navigator.maxTouchPoints);
   var LANG = detectLang(navigator.language);
   document.documentElement.lang = LANG;
   document.documentElement.setAttribute('data-device', DEVICE);
-  // Android: a Google Play al momento (el enlace de respaldo queda en la página)
-  if (DEVICE === 'android') location.replace(PLAY_URL);
+  if (DEVICE === 'ios') {
+    location.replace(APP_STORE_URL);
+  } else if (DEVICE === 'android') {
+    location.href = androidIntentUrl();
+    // Navegadores que no entienden intent:// (p. ej. dentro de WeChat): si la
+    // página sigue a la vista, a la web de Google Play (los botones quedan de respaldo)
+    setTimeout(function () { if (!document.hidden) location.replace(PLAY_URL); }, 1500);
+  }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --blue:#1f5fa7; --blue-dark:#184c86; --green:#4d9644;
+    --blue:#1f5fa7; --blue-dark:#184c86;
     --canvas:#f4f5f7; --white:#fff; --ink:#22272e; --body:#454c56; --muted:#6b737d;
-    --line:#e2e6ec; --error:#c0392b; --radius:16px;
+    --line:#e2e6ec; --radius:16px;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;}
@@ -48,48 +60,29 @@
     display:flex; flex-direction:column; align-items:center; padding:32px 16px 28px;
   }
   .logo{width:210px; max-width:62%; height:auto; display:block; margin:8px auto 24px;}
-  main{width:100%; max-width:440px; display:flex; flex-direction:column; gap:16px;}
-  .card{background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:24px 22px;}
-  .card.center{text-align:center;}
+  main{width:100%; max-width:440px;}
+  .card{background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:24px 22px; text-align:center;}
   h1{margin:0 0 6px; font-size:21px; line-height:1.3; font-weight:600; color:var(--ink);}
   p{margin:0;}
-  .lead{color:var(--body); font-size:15px;}
+  .lead{font-size:15px;}
   .icon{width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; background:rgba(31,95,167,.09); color:var(--blue);}
-  .icon.left{margin-left:0;}
-  .icon.ok{background:rgba(77,150,68,.12); color:var(--green);}
   svg{width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round;}
+  .btns{display:flex; flex-direction:column; gap:12px; margin-top:20px;}
   .btn{
-    display:flex; align-items:center; justify-content:center; gap:10px; width:100%; min-height:52px;
-    margin-top:18px; padding:14px 18px; border:0; border-radius:14px; cursor:pointer;
-    background:var(--blue); color:#fff; font:inherit; font-weight:600; font-size:16px; text-decoration:none;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; min-height:56px;
+    padding:10px 18px; border-radius:14px; text-decoration:none; font-weight:600; font-size:16px; line-height:1.3;
+    background:var(--blue); color:#fff; border:2px solid var(--blue);
   }
-  .btn:hover{background:var(--blue-dark);}
-  .btn:focus-visible, input:focus-visible, a:focus-visible{outline:3px solid rgba(31,95,167,.35); outline-offset:2px;}
-  .btn[disabled]{opacity:.65; cursor:default;}
-  .btn svg{width:20px; height:20px;}
-  label.field{display:block; margin-top:18px; font-size:14px; font-weight:500; color:var(--ink);}
-  input[type=email]{
-    display:block; width:100%; margin-top:6px; padding:13px 14px; border:1px solid var(--line); border-radius:12px;
-    background:var(--white); color:var(--ink); font:inherit; font-size:16px;
-  }
-  input[type=email]:focus{border-color:var(--blue);}
-  .consent{display:flex; gap:10px; align-items:flex-start; margin-top:16px; font-size:14px; line-height:1.5; cursor:pointer;}
-  .consent input{flex:0 0 auto; width:20px; height:20px; margin:1px 0 0; accent-color:var(--blue);}
-  a{color:var(--blue);}
-  .msg{margin-top:14px; font-size:14px; font-weight:500; color:var(--error);}
-  .msg:empty{display:none;}
-  .done{text-align:center;}
-  .done p{font-size:17px; font-weight:600; color:var(--ink);}
-  /* Honeypot: fuera de la vista y del foco, pero presente para los robots */
-  .hp{position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;}
+  .btn small{font-weight:400; font-size:12px; opacity:.85;}
+  .btn:hover{background:var(--blue-dark); border-color:var(--blue-dark);}
+  .btn.outline{background:var(--white); color:var(--blue);}
+  .btn.outline:hover{background:rgba(31,95,167,.06); border-color:var(--blue);}
+  a:focus-visible{outline:3px solid rgba(31,95,167,.35); outline-offset:2px;}
   footer{margin-top:24px; text-align:center; color:var(--muted); font-size:13px;}
   footer a{color:var(--muted);}
-  [hidden]{display:none !important;}
-  /* Qué se enseña en cada dispositivo (sin JavaScript se ve todo menos el aviso de Android) */
-  #view-android{display:none;}
-  html[data-device=android] #view-android{display:block;}
-  html[data-device=android] #view-play, html[data-device=android] #view-waitlist{display:none;}
-  html[data-device=ios] #view-play{display:none;}
+  /* En el móvil sale primero su tienda (mientras redirige, como respaldo) */
+  html[data-device=android] #btn-play{order:-1; background:var(--blue); color:#fff;}
+  html[data-device=android] #btn-ios{background:var(--white); color:var(--blue);}
   @media(max-width:380px){ .card{padding:20px 18px;} h1{font-size:19px;} }
 </style>
 </head>
@@ -98,189 +91,53 @@
 <img class="logo" src="logo.png" width="1283" height="470" alt="Tigo — un poco de todo">
 
 <main>
-  <!-- Android: redirección inmediata + enlace de respaldo -->
-  <section class="card center" id="view-android">
+  <section class="card">
     <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg></div>
-    <h1 data-i18n="android_title">Abriendo Google Play…</h1>
-    <a class="btn" href="https://play.google.com/store/apps/details?id=com.zihao.tigo" data-i18n="android_btn">Abrir en Google Play</a>
-  </section>
-
-  <!-- Ordenador y resto: botón de Google Play -->
-  <section class="card center" id="view-play">
-    <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg></div>
-    <h1 data-i18n="play_title">Descarga la app Tigo</h1>
-    <p class="lead" data-i18n="play_text">Tus compras en Tigo suman puntos. Disponible para Android.</p>
-    <a class="btn" href="https://play.google.com/store/apps/details?id=com.zihao.tigo" data-i18n="play_btn">Descargar en Google Play</a>
-  </section>
-
-  <!-- iPhone / iPad (y debajo del botón en ordenador): lista de espera -->
-  <section class="card" id="view-waitlist">
-    <form id="wl-form" novalidate>
-      <div class="icon left"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M4 7.5l8 6 8-6"/></svg></div>
-      <h1 data-i18n="wl_title">La app para iPhone llega pronto</h1>
-      <p class="lead" data-i18n="wl_text">Déjanos tu correo y te avisaremos en cuanto esté disponible.</p>
-
-      <label class="field" for="wl-email" data-i18n="wl_email">Correo electrónico</label>
-      <input type="email" id="wl-email" name="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" maxlength="254" required>
-
-      <div class="hp" aria-hidden="true">
-        <label for="wl-website">Website</label>
-        <input type="text" id="wl-website" name="website" tabindex="-1" autocomplete="off">
-      </div>
-
-      <label class="consent">
-        <input type="checkbox" id="wl-consent" name="consent" required>
-        <span><span data-i18n="wl_consent">Acepto recibir un correo cuando la app esté disponible para iPhone.</span>
-        <a id="wl-privacy" href="https://tigoupdt.github.io/tigo-privacidad/" target="_blank" rel="noopener" data-i18n="wl_privacy">Política de privacidad</a></span>
-      </label>
-
-      <p class="msg" id="wl-msg" role="alert"></p>
-      <button class="btn" type="submit" id="wl-btn" data-i18n="wl_btn">Avisarme</button>
-    </form>
-
-    <div class="done" id="wl-done" hidden>
-      <div class="icon ok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
-      <p data-i18n="wl_ok" role="status">¡Listo! Te avisaremos.</p>
+    <h1 data-i18n="title">Descarga la app Tigo</h1>
+    <p class="lead" data-i18n="text">Tus compras en Tigo suman puntos. Disponible para iPhone y Android.</p>
+    <div class="btns">
+      <a class="btn" id="btn-ios" href="https://apps.apple.com/app/id6834421582"><small data-i18n="ios_small">Para iPhone</small><span data-i18n="ios_btn">Descargar en la App Store</span></a>
+      <a class="btn outline" id="btn-play" href="https://play.google.com/store/apps/details?id=com.zihao.tigo"><small data-i18n="play_small">Para Android</small><span data-i18n="play_btn">Descargar en Google Play</span></a>
     </div>
   </section>
 </main>
 
 <footer>
   Tigo — un poco de todo · Pollença<br>
-  <a id="ft-privacy" href="https://tigoupdt.github.io/tigo-privacidad/" data-i18n="wl_privacy">Política de privacidad</a>
+  <a id="ft-privacy" href="https://tigoupdt.github.io/tigo-privacidad/" data-i18n="privacy">Política de privacidad</a>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.min.js" defer></script>
 <script>
 (function () {
-  // Clave PUBLICABLE (anon) de Supabase: es pública por diseño. La tabla solo
-  // admite INSERT desde aquí (RLS); nunca poner aquí la clave service_role.
-  var SUPABASE_URL = 'https://scrpzxcnisqfuzeexmhp.supabase.co';
-  var SUPABASE_KEY = 'sb_publishable_5a9RrTvb_u3NuOHcP456yQ_u2S1T6Si';
-  var PRIVACY_URL = 'https://tigoupdt.github.io/tigo-privacidad/';
-
   var T = {
-    es: {
-      android_title: 'Abriendo Google Play…', android_btn: 'Abrir en Google Play',
-      play_title: 'Descarga la app Tigo', play_text: 'Tus compras en Tigo suman puntos. Disponible para Android.', play_btn: 'Descargar en Google Play',
-      wl_title: 'La app para iPhone llega pronto', wl_text: 'Déjanos tu correo y te avisaremos en cuanto esté disponible.',
-      wl_email: 'Correo electrónico', wl_consent: 'Acepto recibir un correo cuando la app esté disponible para iPhone.',
-      wl_privacy: 'Política de privacidad', wl_btn: 'Avisarme', wl_sending: 'Enviando…', wl_ok: '¡Listo! Te avisaremos.',
-      err_email: 'Escribe un correo electrónico válido.', err_consent: 'Marca la casilla para poder avisarte.',
-      err_network: 'No hay conexión. Comprueba tu internet e inténtalo de nuevo.', err_generic: 'No se ha podido guardar. Inténtalo de nuevo en unos minutos.'
-    },
-    ca: {
-      android_title: 'Obrint Google Play…', android_btn: 'Obre a Google Play',
-      play_title: "Descarrega l'app Tigo", play_text: 'Les teves compres a Tigo sumen punts. Disponible per a Android.', play_btn: 'Descarrega a Google Play',
-      wl_title: "L'app per a iPhone arriba aviat", wl_text: "Deixa'ns el teu correu i t'avisarem tan bon punt estigui disponible.",
-      wl_email: 'Correu electrònic', wl_consent: "Accepto rebre un correu quan l'app estigui disponible per a iPhone.",
-      wl_privacy: 'Política de privacitat', wl_btn: "Avisa'm", wl_sending: 'Enviant…', wl_ok: "Fet! T'avisarem.",
-      err_email: 'Escriu un correu electrònic vàlid.', err_consent: 'Marca la casella per poder avisar-te.',
-      err_network: 'No hi ha connexió. Comprova el teu internet i torna-ho a provar.', err_generic: "No s'ha pogut desar. Torna-ho a provar d'aquí a uns minuts."
-    },
-    en: {
-      android_title: 'Opening Google Play…', android_btn: 'Open in Google Play',
-      play_title: 'Get the Tigo app', play_text: 'Your purchases at Tigo earn points. Available for Android.', play_btn: 'Download on Google Play',
-      wl_title: 'The iPhone app is coming soon', wl_text: "Leave us your email and we'll let you know as soon as it's available.",
-      wl_email: 'Email address', wl_consent: 'I agree to receive an email when the app is available for iPhone.',
-      wl_privacy: 'Privacy policy', wl_btn: 'Notify me', wl_sending: 'Sending…', wl_ok: "All set! We'll let you know.",
-      err_email: 'Enter a valid email address.', err_consent: 'Tick the box so we can notify you.',
-      err_network: 'No connection. Check your internet and try again.', err_generic: "We couldn't save it. Please try again in a few minutes."
-    },
-    de: {
-      android_title: 'Google Play wird geöffnet…', android_btn: 'In Google Play öffnen',
-      play_title: 'Lade die Tigo-App herunter', play_text: 'Deine Einkäufe bei Tigo bringen Punkte. Verfügbar für Android.', play_btn: 'Bei Google Play herunterladen',
-      wl_title: 'Die App für das iPhone kommt bald', wl_text: 'Hinterlasse uns deine E-Mail-Adresse und wir sagen dir Bescheid, sobald sie verfügbar ist.',
-      wl_email: 'E-Mail-Adresse', wl_consent: 'Ich bin einverstanden, eine E-Mail zu erhalten, sobald die App für das iPhone verfügbar ist.',
-      wl_privacy: 'Datenschutzerklärung', wl_btn: 'Benachrichtigen', wl_sending: 'Wird gesendet…', wl_ok: 'Fertig! Wir sagen dir Bescheid.',
-      err_email: 'Gib eine gültige E-Mail-Adresse ein.', err_consent: 'Setze das Häkchen, damit wir dich benachrichtigen können.',
-      err_network: 'Keine Verbindung. Prüfe dein Internet und versuche es erneut.', err_generic: 'Speichern nicht möglich. Versuche es in ein paar Minuten erneut.'
-    },
-    zh: {
-      android_title: '正在打开 Google Play…', android_btn: '在 Google Play 中打开',
-      play_title: '下载 Tigo 应用', play_text: '在 Tigo 购物即可累积积分。现已支持安卓。', play_btn: '在 Google Play 下载',
-      wl_title: 'iPhone 版即将推出', wl_text: '留下您的邮箱，上线后我们会第一时间通知您。',
-      wl_email: '电子邮箱', wl_consent: '我同意在 iPhone 版应用上线时收到一封邮件通知。',
-      wl_privacy: '隐私政策', wl_btn: '通知我', wl_sending: '正在发送…', wl_ok: '好了！我们会通知您。',
-      err_email: '请输入有效的电子邮箱。', err_consent: '请勾选同意，我们才能通知您。',
-      err_network: '没有网络连接。请检查网络后重试。', err_generic: '保存失败，请几分钟后再试。'
-    }
+    es: { title: 'Descarga la app Tigo', text: 'Tus compras en Tigo suman puntos. Disponible para iPhone y Android.',
+          ios_small: 'Para iPhone', ios_btn: 'Descargar en la App Store', play_small: 'Para Android', play_btn: 'Descargar en Google Play',
+          privacy: 'Política de privacidad' },
+    ca: { title: "Descarrega l'app Tigo", text: 'Les teves compres a Tigo sumen punts. Disponible per a iPhone i Android.',
+          ios_small: 'Per a iPhone', ios_btn: "Descarrega a l'App Store", play_small: 'Per a Android', play_btn: 'Descarrega a Google Play',
+          privacy: 'Política de privacitat' },
+    en: { title: 'Get the Tigo app', text: 'Your purchases at Tigo earn points. Available for iPhone and Android.',
+          ios_small: 'For iPhone', ios_btn: 'Download on the App Store', play_small: 'For Android', play_btn: 'Get it on Google Play',
+          privacy: 'Privacy policy' },
+    de: { title: 'Lade die Tigo-App herunter', text: 'Deine Einkäufe bei Tigo bringen Punkte. Verfügbar für iPhone und Android.',
+          ios_small: 'Für iPhone', ios_btn: 'Im App Store laden', play_small: 'Für Android', play_btn: 'Bei Google Play herunterladen',
+          privacy: 'Datenschutzerklärung' },
+    zh: { title: '下载 Tigo 应用', text: '在 Tigo 购物即可累积积分。支持 iPhone 和安卓。',
+          ios_small: 'iPhone 版', ios_btn: '在 App Store 下载', play_small: '安卓版', play_btn: '在 Google Play 下载',
+          privacy: '隐私政策' }
   };
-
   var lang = window.LANG || 'es';
   var t = T[lang] || T.es;
-
-  // Textos en el idioma del navegador
   var nodes = document.querySelectorAll('[data-i18n]');
   for (var i = 0; i < nodes.length; i++) {
     var k = nodes[i].getAttribute('data-i18n');
     if (t[k]) nodes[i].textContent = t[k];
   }
-  document.title = 'Tigo · ' + (window.DEVICE === 'ios' ? t.wl_title : t.play_title);
+  document.title = 'Tigo · ' + t.title;
   // La política abre en el mismo idioma (sus secciones son #es, #ca, #en, #zh, #de)
-  var privacy = PRIVACY_URL + (lang === 'es' ? '' : '#' + lang);
-  document.getElementById('wl-privacy').href = privacy;
-  document.getElementById('ft-privacy').href = privacy;
-
-  if (window.DEVICE === 'android') return; // ya está saliendo hacia Google Play
-
-  var form = document.getElementById('wl-form');
-  var emailEl = document.getElementById('wl-email');
-  var consentEl = document.getElementById('wl-consent');
-  var hpEl = document.getElementById('wl-website');
-  var msgEl = document.getElementById('wl-msg');
-  var btnEl = document.getElementById('wl-btn');
-  var busy = false;
-  var client = null;
-
-  function showError(key) { msgEl.textContent = t[key]; }
-  function showDone() { form.hidden = true; document.getElementById('wl-done').hidden = false; }
-  function setBusy(on) {
-    busy = on; btnEl.disabled = on;
-    btnEl.textContent = on ? t.wl_sending : t.wl_btn;
-  }
-  function getClient() {
-    if (client) return client;
-    if (!window.supabase || !window.supabase.createClient) return null; // el script no cargó
-    client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
-    });
-    return client;
-  }
-  function isNetworkError(err) {
-    if (navigator.onLine === false) return true;
-    var m = String((err && err.message) || err || '');
-    return /failed to fetch|networkerror|load failed|network request failed|timeout|aborted/i.test(m);
-  }
-
-  form.addEventListener('submit', function (ev) {
-    ev.preventDefault();
-    if (busy) return;
-    msgEl.textContent = '';
-
-    // Minúsculas y sin espacios (ni delante, ni detrás, ni en medio)
-    var email = emailEl.value.replace(/\s+/g, '').toLowerCase();
-    if (email.length === 0 || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
-      showError('err_email'); emailEl.focus(); return;
-    }
-    if (!consentEl.checked) { showError('err_consent'); consentEl.focus(); return; }
-    // Honeypot relleno: es un robot. No se envía nada y se le enseña el éxito.
-    if (hpEl.value) { showDone(); return; }
-
-    var sb = getClient();
-    if (!sb) { showError('err_network'); return; }
-
-    setBusy(true);
-    sb.from('ios_waitlist').insert({ email: email, lang: lang, consent: true }).then(function (res) {
-      setBusy(false);
-      var err = res && res.error;
-      if (!err || err.code === '23505') { showDone(); return; } // 23505: ya estaba apuntado
-      showError(isNetworkError(err) ? 'err_network' : 'err_generic');
-    }, function (err) {
-      setBusy(false);
-      showError(isNetworkError(err) ? 'err_network' : 'err_generic');
-    });
-  });
+  document.getElementById('ft-privacy').href = 'https://tigoupdt.github.io/tigo-privacidad/' + (lang === 'es' ? '' : '#' + lang);
+  // Android: el botón de Play también usa intent:// (abre la app Play Store)
+  if (window.DEVICE === 'android') document.getElementById('btn-play').href = androidIntentUrl();
 })();
 </script>
 </body>

@@ -6,7 +6,7 @@ const path = require('path');
 const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 const m = html.match(/\/\* detect:start \*\/([\s\S]*?)\/\* detect:end \*\//);
 if (!m) { console.error('No se encuentra el bloque detect en index.html'); process.exit(1); }
-const { detectDevice, detectLang } = new Function(m[1] + '; return { detectDevice, detectLang };')();
+const { detectDevice, detectLang, androidIntentUrl, APP_STORE_URL } = new Function(m[1] + '; return { detectDevice, detectLang, androidIntentUrl, APP_STORE_URL };')();
 
 const devices = [
   ['Android Chrome (Pixel)', 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36', 5, 'android'],
@@ -38,6 +38,14 @@ for (const [l, want] of langs) {
   const got = detectLang(l);
   if (got !== want) fail++;
   console.log(`${got === want ? 'ok  ' : 'FALLO'} idioma ${String(l).padEnd(33)} -> ${got}${got === want ? '' : ' (esperado ' + want + ')'}`);
+}
+const links = [
+  ['App Store', APP_STORE_URL, 'https://apps.apple.com/app/id6834421582'],
+  ['intent de Play', androidIntentUrl(), 'intent://details?id=com.zihao.tigo#Intent;scheme=market;package=com.android.vending;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.zihao.tigo;end'],
+];
+for (const [name, got, want] of links) {
+  if (got !== want) fail++;
+  console.log(`${got === want ? 'ok  ' : 'FALLO'} enlace ${name.padEnd(33)} -> ${got}`);
 }
 console.log(fail ? `\n${fail} fallo(s)` : '\nTodo correcto');
 process.exit(fail ? 1 : 0);
