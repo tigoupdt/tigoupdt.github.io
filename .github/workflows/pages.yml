@@ -1,0 +1,57 @@
+# Genera la web (portada + Novedades de la app) y la publica en GitHub Pages.
+# Se ejecuta: al subir a main, cada día y a mano (Actions > Publicar la web > Run workflow).
+# Pages debe estar en Settings > Pages > Source: "GitHub Actions".
+name: Publicar la web
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '23 4 * * *'   # cada día, 04:23 UTC (05:23 o 06:23 en Pollença)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  # Son datos PÚBLICOS: la URL del proyecto y la clave publicable (la misma que lleva la app).
+  # La vista public_products solo expone campos públicos de productos publicados.
+  SUPABASE_URL: https://scrpzxcnisqfuzeexmhp.supabase.co
+  SUPABASE_PUBLISHABLE_KEY: sb_publishable_5a9RrTvb_u3NuOHcP456yQ_u2S1T6Si
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Probar la redirección de /app/
+        run: node tests/detect.test.js
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+      - name: Generar la web con las Novedades
+        run: node build.js --require-news
+      - name: Comprobar el resultado
+        run: |
+          test -f _site/index.html
+          test -f _site/app/index.html
+          test -f _site/sitemap.xml
+          test -d _site/novedades
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1

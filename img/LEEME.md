@@ -10,5 +10,6 @@ Sube aquí las fotos reales con estos nombres exactos (vale .jpg, .jpeg, .png o 
 
 Consejos: fotos horizontales, con buena luz y sin personas reconocibles. Pesadas como máximo 400 KB cada una.
 
-Después ejecuta `node build.js` (o pídeselo a Claude) y publica. Mientras falte una foto, su hueco no aparece en la web publicada.
-Para ver los huecos marcados en local: `node build.js --preview`.
+Después sube los cambios a `main`: la GitHub Action regenera y publica la web sola (no hace falta ejecutar nada).
+Mientras falte una foto, su hueco no aparece en la web publicada.
+Para ver los huecos marcados en local: `node build.js --fixture --preview` y abrir la carpeta `_site/` con un servidor local.

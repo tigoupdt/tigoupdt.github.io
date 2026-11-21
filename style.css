@@ -96,6 +96,34 @@ figcaption{margin-top:8px; font-weight:600; color:var(--ink);}
 .ticks li::before{content:"✓"; position:absolute; left:0; top:6px; font-weight:700; width:24px; height:24px; border-radius:50%; background:#fff; color:var(--blue); text-align:center; line-height:24px; font-size:.95rem;}
 .stores{display:flex; flex-direction:column; gap:12px; align-self:center;}
 
+
+/* Novedades */
+.news,.news-list,.product{margin-top:36px;}
+.news-list h1,.product h1{font-size:2rem; margin-bottom:10px;}
+.ngrid{list-style:none; margin:18px 0 0; padding:0; display:grid; gap:14px; grid-template-columns:1fr;}
+.ncard{background:var(--white); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;}
+.ncard a{display:block; color:inherit; text-decoration:none;}
+.ncard a:hover h3{text-decoration:underline;}
+.ncard img,.noimg{display:block; width:100%; aspect-ratio:4/3; object-fit:cover; background:#dfe4ea;}
+.ncard-body{display:block; padding:14px 16px 16px;}
+.ncard h3{margin:0 0 8px;}
+.badge{display:inline-block; background:#e3f3e1; color:#1d4f18; font-weight:700; font-size:.95rem; line-height:1.3; padding:6px 12px; border-radius:20px;}
+.center{text-align:center; margin-top:20px;}
+.center .btn{display:inline-flex; min-width:260px;}
+.crumb{margin:0 0 12px;} .crumb a{font-weight:600;}
+.date{color:#4a5563; margin:0 0 16px;}
+.pgallery{display:grid; gap:14px; margin-bottom:18px;}
+.pgallery img{width:100%; height:auto; max-height:70vh; object-fit:contain; background:var(--white); border:1px solid var(--line); border-radius:var(--radius); display:block;}
+.pdesc{font-size:1.1rem;}
+.redeem{background:#e3f3e1; border:2px solid var(--green); border-radius:var(--radius); padding:18px; margin:18px 0; display:grid; gap:12px; color:#1d4f18; font-size:1.15rem;}
+.ask{color:#4a5563;}
+@media(min-width:700px){
+  .ngrid{grid-template-columns:repeat(2,1fr);}
+  .news-list h1,.product h1{font-size:2.5rem;}
+  .product{max-width:780px;}
+}
+@media(min-width:980px){ .ngrid{grid-template-columns:repeat(3,1fr);} }
+
 /* Pie */
 .foot{padding:26px 0 36px; text-align:center; font-size:1rem;}
 .foot p{margin:0 0 8px;}
