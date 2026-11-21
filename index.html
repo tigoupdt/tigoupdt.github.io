@@ -3,141 +3,193 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tigo · App</title>
-<meta name="robots" content="noindex">
-<link rel="icon" type="image/png" href="favicon.png">
-<script>
-  // --- Detección y enlaces (funciones puras: se prueban con tests/detect.test.js) ---
-  /* detect:start */
-  var APP_STORE_URL = 'https://apps.apple.com/app/id6834421582';
-  var PLAY_URL = 'https://play.google.com/store/apps/details?id=com.zihao.tigo';
-  function detectDevice(ua, maxTouchPoints) {
-    ua = String(ua || '');
-    if (/android/i.test(ua)) return 'android';
-    if (/iPhone|iPad|iPod/i.test(ua)) return 'ios';
-    // iPadOS se identifica como Mac: solo un iPad tiene pantalla táctil multitoque
-    if (/Macintosh/i.test(ua) && Number(maxTouchPoints) > 1) return 'ios';
-    return 'other';
-  }
-  function detectLang(language) {
-    var l = String(language || '').toLowerCase().slice(0, 2);
-    return ['es', 'ca', 'en', 'de', 'zh'].indexOf(l) >= 0 ? l : 'es';
-  }
-  // Android: abre la app Play Store; si no está (móvil sin Google), Chrome va a la web de Play
-  function androidIntentUrl() {
-    return 'intent://details?id=com.zihao.tigo#Intent;scheme=market;package=com.android.vending;S.browser_fallback_url='
-      + encodeURIComponent(PLAY_URL) + ';end';
-  }
-  /* detect:end */
-  var DEVICE = detectDevice(navigator.userAgent, navigator.maxTouchPoints);
-  var LANG = detectLang(navigator.language);
-  document.documentElement.lang = LANG;
-  document.documentElement.setAttribute('data-device', DEVICE);
-  if (DEVICE === 'ios') {
-    location.replace(APP_STORE_URL);
-  } else if (DEVICE === 'android') {
-    location.href = androidIntentUrl();
-    // Navegadores que no entienden intent:// (p. ej. dentro de WeChat): si la
-    // página sigue a la vista, a la web de Google Play (los botones quedan de respaldo)
-    setTimeout(function () { if (!document.hidden) location.replace(PLAY_URL); }, 1500);
-  }
+<title>Tigo: un poco de todo · Bazar en Pollença</title>
+<meta name="description" content="Bazar en Pollença con de todo a buen precio: hogar, limpieza, ferretería, papelería, juguetes y regalos. Carrer de Cecili Metel, 6. Abierto todos los días.">
+<meta name="theme-color" content="#1f5fa8">
+<link rel="canonical" href="https://tigoupdt.github.io/">
+<link rel="alternate" hreflang="es" href="https://tigoupdt.github.io/">
+<link rel="alternate" hreflang="ca" href="https://tigoupdt.github.io/ca/">
+<link rel="alternate" hreflang="en" href="https://tigoupdt.github.io/en/">
+<link rel="alternate" hreflang="de" href="https://tigoupdt.github.io/de/">
+<link rel="alternate" hreflang="zh-Hans" href="https://tigoupdt.github.io/zh/">
+<link rel="alternate" hreflang="x-default" href="https://tigoupdt.github.io/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tigo: un poco de todo">
+<meta property="og:title" content="Tigo: un poco de todo · Bazar en Pollença">
+<meta property="og:description" content="Bazar en Pollença con de todo a buen precio: hogar, limpieza, ferretería, papelería, juguetes y regalos. Carrer de Cecili Metel, 6. Abierto todos los días.">
+<meta property="og:url" content="https://tigoupdt.github.io/">
+<meta property="og:image" content="https://tigoupdt.github.io/logo.png">
+<meta property="og:locale" content="es_ES">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:locale:alternate" content="en_GB">
+<meta property="og:locale:alternate" content="de_DE">
+<meta property="og:locale:alternate" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Store",
+  "@id": "https://tigoupdt.github.io/#tienda",
+  "name": "Tigo: un poco de todo",
+  "description": "Bazar en Pollença con de todo a buen precio: hogar, limpieza, ferretería, papelería, juguetes, regalos y más.",
+  "url": "https://tigoupdt.github.io/",
+  "inLanguage": "es",
+  "image": [
+    "https://tigoupdt.github.io/logo.png"
+  ],
+  "logo": "https://tigoupdt.github.io/logo.png",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Carrer de Cecili Metel, 6, Bajos",
+    "postalCode": "07460",
+    "addressLocality": "Pollença",
+    "addressRegion": "Illes Balears",
+    "addressCountry": "ES"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 39.8769648,
+    "longitude": 3.021083
+  },
+  "hasMap": "https://maps.app.goo.gl/aU5gw8QWpyf7ZBVE7",
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "opens": "09:00",
+      "closes": "21:00"
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": "Sunday",
+      "opens": "09:00",
+      "closes": "20:30"
+    }
+  ]
+}
 </script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --blue:#1f5fa7; --blue-dark:#184c86;
-    --canvas:#f4f5f7; --white:#fff; --ink:#22272e; --body:#454c56; --muted:#6b737d;
-    --line:#e2e6ec; --radius:16px;
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;}
-  body{
-    min-height:100vh; background:var(--canvas); color:var(--body);
-    font-family:'Poppins',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
-    font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased;
-    display:flex; flex-direction:column; align-items:center; padding:32px 16px 28px;
-  }
-  .logo{width:210px; max-width:62%; height:auto; display:block; margin:8px auto 24px;}
-  main{width:100%; max-width:440px;}
-  .card{background:var(--white); border:1px solid var(--line); border-radius:var(--radius); padding:24px 22px; text-align:center;}
-  h1{margin:0 0 6px; font-size:21px; line-height:1.3; font-weight:600; color:var(--ink);}
-  p{margin:0;}
-  .lead{font-size:15px;}
-  .icon{width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; background:rgba(31,95,167,.09); color:var(--blue);}
-  svg{width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round;}
-  .btns{display:flex; flex-direction:column; gap:12px; margin-top:20px;}
-  .btn{
-    display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; min-height:56px;
-    padding:10px 18px; border-radius:14px; text-decoration:none; font-weight:600; font-size:16px; line-height:1.3;
-    background:var(--blue); color:#fff; border:2px solid var(--blue);
-  }
-  .btn small{font-weight:400; font-size:12px; opacity:.85;}
-  .btn:hover{background:var(--blue-dark); border-color:var(--blue-dark);}
-  .btn.outline{background:var(--white); color:var(--blue);}
-  .btn.outline:hover{background:rgba(31,95,167,.06); border-color:var(--blue);}
-  a:focus-visible{outline:3px solid rgba(31,95,167,.35); outline-offset:2px;}
-  footer{margin-top:24px; text-align:center; color:var(--muted); font-size:13px;}
-  footer a{color:var(--muted);}
-  /* En el móvil sale primero su tienda (mientras redirige, como respaldo) */
-  html[data-device=android] #btn-play{order:-1; background:var(--blue); color:#fff;}
-  html[data-device=android] #btn-ios{background:var(--white); color:var(--blue);}
-  @media(max-width:380px){ .card{padding:20px 18px;} h1{font-size:19px;} }
-</style>
 </head>
 <body>
+<a class="skip" href="#contenido">Saltar al contenido</a>
 
-<img class="logo" src="logo.png" width="1283" height="470" alt="Tigo — un poco de todo">
+<header class="top">
+  <div class="wrap top-row">
+    <a class="brand" href="/"><img src="/logo.png" width="1283" height="470" alt="Tigo: un poco de todo"></a>
+    <nav class="langs" aria-label="Idioma">
+      <a href="/" hreflang="es" lang="es" aria-current="page">Español</a>
+      <a href="/ca/" hreflang="ca" lang="ca">Català</a>
+      <a href="/en/" hreflang="en" lang="en">English</a>
+      <a href="/de/" hreflang="de" lang="de">Deutsch</a>
+      <a href="/zh/" hreflang="zh-Hans" lang="zh-Hans">中文</a>
+    </nav>
+  </div>
+</header>
 
-<main>
-  <section class="card">
-    <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg></div>
-    <h1 data-i18n="title">Descarga la app Tigo</h1>
-    <p class="lead" data-i18n="text">Tus compras en Tigo suman puntos. Disponible para iPhone y Android.</p>
-    <div class="btns">
-      <a class="btn" id="btn-ios" href="https://apps.apple.com/app/id6834421582"><small data-i18n="ios_small">Para iPhone</small><span data-i18n="ios_btn">Descargar en la App Store</span></a>
-      <a class="btn outline" id="btn-play" href="https://play.google.com/store/apps/details?id=com.zihao.tigo"><small data-i18n="play_small">Para Android</small><span data-i18n="play_btn">Descargar en Google Play</span></a>
+<main id="contenido">
+  <section class="hero">
+    <div class="wrap">
+      <p class="kicker">Bazar en Pollença</p>
+      <h1>Tigo: un poco de todo</h1>
+      <p class="lead">Tigo es un bazar en Pollença donde encontrarás de todo a buen precio: para el hogar, la limpieza, la ferretería, la papelería, los juguetes, regalos y mucho más.</p>
+      <div class="actions">
+        <a class="btn" href="/app/">Descargar la app</a>
+        <a class="btn outline" href="https://www.google.com/maps/dir/?api=1&destination=39.8769648,3.021083" rel="noopener">Cómo llegar</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap info" aria-label="Horario / Dónde estamos">
+    <div class="card" id="horario">
+      <h2>Horario</h2>
+      <dl class="hours">
+        <div><dt>Lunes a sábado</dt><dd>9:00–21:00</dd></div>
+        <div><dt>Domingo</dt><dd>9:00–20:30</dd></div>
+      </dl>
+      <p class="status" id="status" hidden data-open="Abierto ahora, hasta las {t}" data-closed="Cerrado ahora. Abrimos a las 9:00."></p>
+    </div>
+    <div class="card" id="donde">
+      <h2>Dónde estamos</h2>
+      <address>Carrer de Cecili Metel, 6, Bajos<br>07460 Pollença, Illes Balears<br>España</address>
+      <div class="actions">
+        <a class="btn" href="https://www.google.com/maps/dir/?api=1&destination=39.8769648,3.021083" rel="noopener">Cómo llegar</a>
+      </div>
+      <p class="more"><a href="https://maps.app.goo.gl/aU5gw8QWpyf7ZBVE7" rel="noopener">Ver la ficha en Google Maps</a></p>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="map"><iframe title="Mapa de Google Maps con la ubicación de Tigo en Pollença" src="https://www.google.com/maps?q=39.8769648,3.021083&hl=es&z=17&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div>
+  </div>
+
+  <section class="wrap products" aria-labelledby="h-products">
+    <h2 id="h-products">Qué encontrarás en nuestro bazar</h2>
+    <p class="intro">De todo un poco, a buen precio.</p>
+    <ul class="grid">
+        <li><h3>Hogar y menaje</h3><p>Cocina, vajilla y organización</p></li>
+        <li><h3>Limpieza y droguería</h3><p>Para la casa y el día a día</p></li>
+        <li><h3>Ferretería y bricolaje</h3><p>Herramientas y pequeños arreglos</p></li>
+        <li><h3>Papelería y material escolar</h3><p>Cuadernos, bolígrafos y más</p></li>
+        <li><h3>Juguetes</h3><p>Para los más pequeños</p></li>
+        <li><h3>Regalos y fiesta</h3><p>Detalles y artículos para celebrar</p></li>
+        <li><h3>Decoración</h3><p>Para dar vida a tu casa</p></li>
+        <li><h3>Playa y verano</h3><p>Para disfrutar del sol y del mar</p></li>
+        <li><h3>Bolsos y maletas</h3><p>Para el viaje y el día a día</p></li>
+        <li><h3>Textil del hogar</h3><p>Toallas y ropa de cama</p></li>
+        <li><h3>Electrónica y pilas</h3><p>Pequeños accesorios y recambios</p></li>
+        <li><h3>Jardín y exterior</h3><p>Para la terraza y el jardín</p></li>
+        <li><h3>Bebidas</h3><p>Agua, refrescos y más para el calor</p></li>
+    </ul>
+  </section>
+
+  <section class="app" id="app" aria-labelledby="h-app">
+    <div class="wrap app-row">
+      <div>
+        <h2 id="h-app">Suma puntos con la app de Tigo</h2>
+        <ul class="ticks">
+          <li>Enseña tu código QR en caja y suma puntos con cada compra.</li>
+          <li>100 puntos de bienvenida al crear tu cuenta.</li>
+          <li>Cámbialos por vales de descuento o regalos.</li>
+          <li>Recibe avisos de novedades y ofertas.</li>
+        </ul>
+      </div>
+      <div class="stores">
+        <a class="btn light" href="https://apps.apple.com/app/id6834421582" rel="noopener"><small>Para iPhone</small><span>Descargar en la App Store</span></a>
+        <a class="btn light" href="https://play.google.com/store/apps/details?id=com.zihao.tigo" rel="noopener"><small>Para Android</small><span>Descargar en Google Play</span></a>
+      </div>
     </div>
   </section>
 </main>
 
-<footer>
-  Tigo — un poco de todo · Pollença<br>
-  <a id="ft-privacy" href="https://tigoupdt.github.io/tigo-privacidad/" data-i18n="privacy">Política de privacidad</a>
+<footer class="foot">
+  <div class="wrap">
+    <p>Tigo: un poco de todo · Pollença</p>
+    <p><a href="https://tigoupdt.github.io/tigo-privacidad/">Política de privacidad</a> · <a href="https://tigoupdt.github.io/tigo-privacidad/eliminar-cuenta.html">Eliminar cuenta</a></p>
+  </div>
 </footer>
 
 <script>
+// Abierto / cerrado ahora, con la hora de España (si falla, no se muestra nada)
 (function () {
-  var T = {
-    es: { title: 'Descarga la app Tigo', text: 'Tus compras en Tigo suman puntos. Disponible para iPhone y Android.',
-          ios_small: 'Para iPhone', ios_btn: 'Descargar en la App Store', play_small: 'Para Android', play_btn: 'Descargar en Google Play',
-          privacy: 'Política de privacidad' },
-    ca: { title: "Descarrega l'app Tigo", text: 'Les teves compres a Tigo sumen punts. Disponible per a iPhone i Android.',
-          ios_small: 'Per a iPhone', ios_btn: "Descarrega a l'App Store", play_small: 'Per a Android', play_btn: 'Descarrega a Google Play',
-          privacy: 'Política de privacitat' },
-    en: { title: 'Get the Tigo app', text: 'Your purchases at Tigo earn points. Available for iPhone and Android.',
-          ios_small: 'For iPhone', ios_btn: 'Download on the App Store', play_small: 'For Android', play_btn: 'Get it on Google Play',
-          privacy: 'Privacy policy' },
-    de: { title: 'Lade die Tigo-App herunter', text: 'Deine Einkäufe bei Tigo bringen Punkte. Verfügbar für iPhone und Android.',
-          ios_small: 'Für iPhone', ios_btn: 'Im App Store laden', play_small: 'Für Android', play_btn: 'Bei Google Play herunterladen',
-          privacy: 'Datenschutzerklärung' },
-    zh: { title: '下载 Tigo 应用', text: '在 Tigo 购物即可累积积分。支持 iPhone 和安卓。',
-          ios_small: 'iPhone 版', ios_btn: '在 App Store 下载', play_small: '安卓版', play_btn: '在 Google Play 下载',
-          privacy: '隐私政策' }
-  };
-  var lang = window.LANG || 'es';
-  var t = T[lang] || T.es;
-  var nodes = document.querySelectorAll('[data-i18n]');
-  for (var i = 0; i < nodes.length; i++) {
-    var k = nodes[i].getAttribute('data-i18n');
-    if (t[k]) nodes[i].textContent = t[k];
-  }
-  document.title = 'Tigo · ' + t.title;
-  // La política abre en el mismo idioma (sus secciones son #es, #ca, #en, #zh, #de)
-  document.getElementById('ft-privacy').href = 'https://tigoupdt.github.io/tigo-privacidad/' + (lang === 'es' ? '' : '#' + lang);
-  // Android: el botón de Play también usa intent:// (abre la app Play Store)
-  if (window.DEVICE === 'android') document.getElementById('btn-play').href = androidIntentUrl();
+  try {
+    var el = document.getElementById('status');
+    var p = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Madrid', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false }).formatToParts(new Date());
+    var get = function (k) { return p.filter(function (x) { return x.type === k; })[0].value; };
+    var mins = Number(get('hour')) * 60 + Number(get('minute'));
+    var sun = get('weekday') === 'Sun';
+    var open = mins >= 540 && mins < (sun ? 1230 : 1260);
+    el.textContent = open ? el.getAttribute('data-open').replace('{t}', sun ? '20:30' : '21:00') : el.getAttribute('data-closed');
+    el.className = 'status ' + (open ? 'is-open' : 'is-closed');
+    el.hidden = false;
+  } catch (e) {}
 })();
 </script>
 </body>
