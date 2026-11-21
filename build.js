@@ -22,6 +22,7 @@ const LANGS = ['es', 'ca', 'en', 'de', 'zh'];
 const PATHS = { es: '/', ca: '/ca/', en: '/en/', de: '/de/', zh: '/zh/' };
 const HREFLANG = { es: 'es', ca: 'ca', en: 'en', de: 'de', zh: 'zh-Hans' };
 const HOME_NEWS = 6;     // tarjetas en la portada
+const MIN_DESC = 10;     // caracteres mínimos para mostrar una descripción
 const LIST_MAX = 60;     // novedades en la página de listado
 
 const STORE = {
@@ -93,7 +94,8 @@ async function loadProducts() {
     out.push({
       id: r.id, slug: `${slugify(r.name_es || base) || 'producto'}-${id8}`, id8,
       name: Object.fromEntries(LANGS.map((l) => [l, (r['name_' + l] || '').trim()])),
-      desc: Object.fromEntries(LANGS.map((l) => [l, (r['desc_' + l] || '').trim()])),
+      // Una descripción de menos de 10 caracteres (p. ej. un texto de prueba) no se usa: cae en la de otro idioma o en ninguna
+      desc: Object.fromEntries(LANGS.map((l) => [l, ((r['desc_' + l] || '').trim().length >= MIN_DESC ? r['desc_' + l].trim() : '')])),
       redeemable: r.redeemable === true && Number.isInteger(r.points_price) && r.points_price > 0,
       points: r.points_price,
       createdAt: r.created_at, updatedAt: r.updated_at || r.created_at,
@@ -132,7 +134,7 @@ async function downloadPhotos(products) {
 }
 
 const nameOf = (p, lang) => p.name[lang] || p.name.es || p.name.en || p.name.ca || p.name.de || p.name.zh;
-const descOf = (p, lang) => p.desc[lang] || p.desc.es || '';
+const descOf = (p, lang) => [lang, 'es', 'en', 'ca', 'de', 'zh'].map((l) => p.desc[l]).find(Boolean) || '';
 const newsListPath = (lang) => (lang === 'es' ? '' : `/${lang}`) + `/${T[lang].newsSeg}/`;
 const productPath = (lang, p) => newsListPath(lang) + p.slug + '/';
 const fmtDate = (iso, lang) => new Intl.DateTimeFormat(T[lang].dateLocale, { timeZone: 'Europe/Madrid', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(iso));
@@ -182,9 +184,9 @@ function layout(lang, meta, body, extraScript = '') {
 <title>${esc(meta.title)}</title>
 <meta name="description" content="${esc(meta.description)}">
 <meta name="theme-color" content="#1f5fa8">
-<link rel="canonical" href="${url}">
+${meta.noindex ? '<meta name="robots" content="noindex">' : `<link rel="canonical" href="${url}">
 ${alt}
-<link rel="alternate" hreflang="x-default" href="${BASE}${meta.paths.es}">
+<link rel="alternate" hreflang="x-default" href="${BASE}${meta.paths.es}">`}
 <meta property="og:type" content="${meta.type || 'website'}">
 <meta property="og:site_name" content="${esc(STORE.name)}">
 <meta property="og:title" content="${esc(meta.title)}">
@@ -448,6 +450,28 @@ function copyStatic() {
       }
       urls.push({ paths: pPaths, lastmod: p.updatedAt.slice(0, 10) });
     }
+  }
+
+  // 404: GitHub Pages solo usa /404.html (español); el script lleva a la de su idioma según la ruta (/ca/, /en/...)
+  for (const lang of LANGS) {
+    const t = T[lang];
+    const body = `  <section class="wrap notfound">
+    <h1>${esc(t.notFoundH)}</h1>
+    <p class="lead">${esc(t.notFoundText)}</p>
+    <div class="actions">
+      <a class="btn" href="${PATHS[lang]}">${esc(t.goHome)}</a>
+      ${products.length ? `<a class="btn outline" href="${newsListPath(lang)}">${esc(t.newsAll)}</a>` : ''}
+    </div>
+  </section>`;
+    const script = lang === 'es' ? `
+<script>
+(function () {
+  var seg = location.pathname.split('/')[1];
+  if (['ca', 'en', 'de', 'zh'].indexOf(seg) >= 0 && location.pathname !== '/' + seg + '/404.html') location.replace('/' + seg + '/404.html');
+})();
+</script>
+` : '';
+    write(lang === 'es' ? '404.html' : `${lang}/404.html`, layout(lang, { title: t.notFoundH + ' · Tigo', description: t.notFoundText, paths: PATHS, noindex: true }, body, script));
   }
 
   // sitemap.xml y robots.txt
