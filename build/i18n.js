@@ -33,7 +33,6 @@ module.exports = {
     appH: 'Suma puntos con la app de Tigo',
     appItems: [
       'Enseña tu código QR en caja y suma puntos con cada compra.',
-      '100 puntos de bienvenida al crear tu cuenta.',
       'Cámbialos por vales de descuento o regalos.',
       'Recibe avisos de novedades y ofertas.',
     ],
@@ -80,7 +79,6 @@ module.exports = {
     appH: "Suma punts amb l'app de Tigo",
     appItems: [
       "Ensenya el teu codi QR a caixa i suma punts amb cada compra.",
-      '100 punts de benvinguda en crear el compte.',
       "Canvia'ls per vals de descompte o regals.",
       'Rep avisos de novetats i ofertes.',
     ],
@@ -127,7 +125,6 @@ module.exports = {
     appH: 'Earn points with the Tigo app',
     appItems: [
       'Show your QR code at the till and earn points with every purchase.',
-      '100 welcome points when you create your account.',
       'Exchange them for discount vouchers or gifts.',
       'Get alerts about news and offers.',
     ],
@@ -174,7 +171,6 @@ module.exports = {
     appH: 'Punkte sammeln mit der Tigo-App',
     appItems: [
       'Zeige an der Kasse deinen QR-Code und sammle bei jedem Einkauf Punkte.',
-      '100 Willkommenspunkte bei der Anmeldung.',
       'Löse sie gegen Rabattgutscheine oder Geschenke ein.',
       'Erhalte Hinweise zu Neuheiten und Angeboten.',
     ],
@@ -221,7 +217,6 @@ module.exports = {
     appH: '用 Tigo 应用累积积分',
     appItems: [
       '结账时出示二维码,每次购物都能累积积分。',
-      '创建账号即送 100 欢迎积分。',
       '积分可兑换折扣券或礼品。',
       '及时收到新品和优惠通知。',
     ],
