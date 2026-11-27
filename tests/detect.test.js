@@ -1,11 +1,11 @@
-// Prueba de la detección de dispositivo e idioma de index.html.
+// Prueba de la detección de dispositivo e idioma de app/index.html.
 // Uso: node tests/detect.test.js
 const fs = require('fs');
 const path = require('path');
 
-const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+const html = fs.readFileSync(path.join(__dirname, '..', 'app', 'index.html'), 'utf8');
 const m = html.match(/\/\* detect:start \*\/([\s\S]*?)\/\* detect:end \*\//);
-if (!m) { console.error('No se encuentra el bloque detect en index.html'); process.exit(1); }
+if (!m) { console.error('No se encuentra el bloque detect en app/index.html'); process.exit(1); }
 const { detectDevice, detectLang, androidIntentUrl, APP_STORE_URL } = new Function(m[1] + '; return { detectDevice, detectLang, androidIntentUrl, APP_STORE_URL };')();
 
 const devices = [
